@@ -2,7 +2,7 @@
 # Author: Shubham Somani
 
 #!/usr/bin/python
-from text import parser
+import config_parser
 
 import wx
 import  wx.lib.scrolledpanel as scrolled
@@ -10,7 +10,12 @@ import os,sys
 import random
 
 parameters={}
-parameters=parser.return_parameters()
+
+#creating a configuration file
+config_parser.write()
+
+#reading from the configuration file
+parameters=config_parser.read()
 
 class Page(scrolled.ScrolledPanel):
     def __init__(self, parent):
