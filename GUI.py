@@ -56,6 +56,7 @@ class MyApp(wx.Frame):
         for section_index in xrange(number_of_sections):
             section_name=parameters[section_index][0]
             page[section_index]=Page(notebook)
+            page[section_index].SetupScrolling()
             notebook.AddPage(page[section_index],section_name)
             pagesizer[section_index]=wx.BoxSizer(wx.VERTICAL)
 
