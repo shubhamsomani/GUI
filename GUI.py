@@ -151,15 +151,9 @@ class MyApp(wx.Frame):
         config.add_section(section_name)
 
         for section_index in xrange(number_of_sections):
-            config.set(section_name,str(index),'start of section')
-            index=index+1
             for parameter_index in range(1,len(parameters[section_index]),6):
-                config.set(section_name,str(index),input_text[section_index][parameter_index].GetValue())
-                index=index+1
-
-        #Storing the length of index, to be used while loading values.
-        config.add_section("Length of Index")
-        config.set("Length of Index",str(0),index)
+                config.set(section_name,parameters[section_index][parameter_index],input_text[section_index][parameter_index].GetValue())
+                #index=index+1
 
         #writing into configuration.ini
         with open('configuration.ini','wb') as configfile:
@@ -196,26 +190,20 @@ class MyApp(wx.Frame):
 
         config.read('configuration.ini')
         section_name="start"
-        section_index=-1
-        index=int(config.get("Length of Index",str(0)))
+        number_of_sections=len(parameters)
 
-        for i in xrange(index):
-            temp=config.get("start",str(i))
+        for section_index in xrange(number_of_sections):
+            for parameter_index in range(1,len(parameters[section_index]),6):
+                temp=config.get("start",parameters[section_index][parameter_index])
+                if(parameters[section_index][parameter_index+1].strip()=="Boolean feature macro."):
+                    if(temp=="True"):
+                        input_text[section_index][parameter_index].SetValue(1)
+                    else:
+                        input_text[section_index][parameter_index].SetValue(0)
+                    parameter_index=parameter_index+6
+                    continue
 
-            if(temp=='start of section'):
-                section_index=section_index+1
-                parameter_index=1
-                continue
-            if(parameters[section_index][parameter_index+1].strip()=="Boolean feature macro."):
-                if(temp=="True"):
-                    input_text[section_index][parameter_index].SetValue(1)
-                else:
-                    input_text[section_index][parameter_index].SetValue(0)
-                parameter_index=parameter_index+6
-                continue
-
-            input_text[section_index][parameter_index].SetValue(temp)
-            parameter_index=parameter_index+6
+                input_text[section_index][parameter_index].SetValue(temp)
 
         dial = wx.MessageDialog(None,'Values Loaded', 'RTEMS', wx.OK)
         dial.ShowModal()
