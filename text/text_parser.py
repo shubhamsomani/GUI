@@ -1,12 +1,13 @@
 # A text parser which operates on conf.t
 # Author : Shubham Somani
 
-def return_parameters():
+def return_parameters(conf_t):
     
     #-----------section on parsing from the conf.t file---------------------
 
-    data=open("conf.t")
-    contents=data.readlines()
+    #data=open("conf.t")
+    contents=conf_t
+    #contents=data.readlines()
 
     # Variable Declarations
     list=[]
@@ -100,7 +101,9 @@ def return_parameters():
     #print parameters
     return parameters
 
-#return_parameters()
+#data=open("conf.t")
+#contents=data.readlines()
+#return_parameters(contents)
 
     #---------------------- end of processing ------------------------------
     #          The format of the parameters after processing is as follows
