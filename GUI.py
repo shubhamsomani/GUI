@@ -234,6 +234,5 @@ if __name__ == "__main__":
 def set_parameters(data):
     global parameters
     parameters=data
-    print parameters
     main()
 
