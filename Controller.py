@@ -19,9 +19,13 @@ class Frame(wx.Frame):
 
         self.Centre()
         
-        box.Add(m_text, 0, wx.ALL, 10)
+        box.AddSpacer((150,75))
+        box.Add(m_text, 1, wx.CENTER)
+        box.Add(but,0, wx.CENTER)
+        box.AddSpacer((75,75))
+        
         panel.SetSizer(box)
-        panel.Layout()
+        #panel.Layout()
 
     def OnOpen(self,e):
         """ Open a file"""
@@ -35,7 +39,7 @@ class Frame(wx.Frame):
             parameters=text_parser.return_parameters(contents)
             GUI.set_parameters(parameters)
             
-            f.close()
+            data.close()
         dlg.Destroy()
     
 
