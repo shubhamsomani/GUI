@@ -13,7 +13,7 @@ To run the GUI on your system. You need to do just these 3 steps-
 -> wxPython (http://wxpython.org/download.php)
 
 
-3) Now run the GUI.py .
+3) Now run the Controller.py .
 
 
 In case you face any problems please drop me a mail at shubhamsomani92@gmail.com
