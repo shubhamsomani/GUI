@@ -8,17 +8,17 @@ class Frame(wx.Frame):
         wx.Frame.__init__(self, None, title=title, pos=(150,150), size=(400,350))
 
         panel = wx.Panel(self)
-        box = wx.BoxSizer(wx.HORIZONTAL)
+        box = wx.BoxSizer(wx.VERTICAL)
 
         m_text = wx.StaticText(panel, -1, "Welcome to RTEMS Configuration Tool!")
         m_text.SetFont(wx.Font(14, wx.SWISS, wx.NORMAL, wx.BOLD))
         m_text.SetSize(m_text.GetBestSize())
 
-        but=wx.Button(panel, 1, 'Open',(130,130))
+        but=wx.Button(panel, 1, 'Open')
         self.Bind(wx.EVT_BUTTON, self.OnOpen, id=1)
 
         self.Centre()
-        
+
         box.AddSpacer((150,75))
         box.Add(m_text, 1, wx.CENTER)
         box.Add(but,0, wx.CENTER)
