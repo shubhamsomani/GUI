@@ -9,6 +9,7 @@ import  wx.lib.scrolledpanel as scrolled
 import os,sys
 import random
 import ConfigParser
+import Generator
 import re
 
 # List of parameters to be read from file
@@ -118,14 +119,16 @@ def main():
             file1.Append(101, '&Save\tCtrl+S', 'Save the current configurations')
             file1.Append(102, '&Check\tCtrl+K', 'Checks the format of all values')
             file1.Append(103, '&Load\tCtrl+L', 'Load the saved state')
+            file1.Append(104, '&Generate\tCtrl+G', 'Generate the header file')
             file1.AppendSeparator()
-            file1.Append(104, '&Quit\tCtrl+Q', 'Quit the Application')
+            file1.Append(105, '&Quit\tCtrl+Q', 'Quit the Application')
 
             #Event Handler
             self.Bind(wx.EVT_MENU,self.OnSave,id=101)
             self.Bind(wx.EVT_MENU,self.OnCheck,id=102)
             self.Bind(wx.EVT_MENU,self.OnLoad,id=103)
-            self.Bind(wx.EVT_MENU,self.OnQuit,id=104)
+            self.Bind(wx.EVT_MENU,self.OnGenerate,id=104)
+            self.Bind(wx.EVT_MENU,self.OnQuit,id=105)
 
         def OnSave(self, event):
 
@@ -211,6 +214,11 @@ def main():
                     input_text[section_index][parameter_index].SetValue(temp)
 
             dial = wx.MessageDialog(None,'Values Loaded', 'RTEMS', wx.OK)
+            dial.ShowModal()
+
+        def OnGenerate(self, event):
+            Generator.create_header(parameters)
+            dial = wx.MessageDialog(None,'Header file Generated', 'RTEMS', wx.OK)
             dial.ShowModal()
 
         def OnQuit(self,event):
