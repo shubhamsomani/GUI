@@ -15,6 +15,7 @@ class Frame(wx.Frame):
         m_text.SetSize(m_text.GetBestSize())
 
         but=wx.Button(panel, 1, 'Open')
+        but.SetToolTip(wx.ToolTip("Please select conf.t from RTEMS"))
         self.Bind(wx.EVT_BUTTON, self.OnOpen, id=1)
 
         self.Centre()

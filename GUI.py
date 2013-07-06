@@ -9,6 +9,7 @@ import  wx.lib.scrolledpanel as scrolled
 import os,sys
 import random
 import ConfigParser
+import re
 
 # List of parameters to be read from file
 
@@ -87,9 +88,8 @@ def main():
 
                     final_string=parameters[section_index][parameter_index+4]
                     if("@code{" in final_string):
-                        temporary_string=final_string.split("@code{")
-                        temporary_string_2=temporary_string[1].split("}")
-                        final_string=temporary_string_2[0]+temporary_string_2[1]
+                        final_string=final_string.replace("@code{","")
+                        final_string=final_string.replace("}","")
                     label[parameter_index].SetToolTip(wx.ToolTip(final_string))
 
                     # Sizers
@@ -109,37 +109,23 @@ def main():
             #Items of menu
             menubar = wx.MenuBar()
             file1=wx.Menu()
-            edit=wx.Menu()
-            help1=wx.Menu()
 
             #Appending items to menu
             menubar.Append(file1, '&File')
-            menubar.Append(edit, '&Edit')
-            menubar.Append(help1, '&Help')
             self.SetMenuBar(menubar)
 
             #Items of file
-            file1.Append(101, '&Open', 'Open the existing configuration file')
-            file1.Append(102, '&Save\tCtrl+S', 'Save the current configurations')
+            file1.Append(101, '&Save\tCtrl+S', 'Save the current configurations')
+            file1.Append(102, '&Check\tCtrl+K', 'Checks the format of all values')
+            file1.Append(103, '&Load\tCtrl+L', 'Load the saved state')
             file1.AppendSeparator()
-            file1.Append(103, '&Check', 'Checks the format of all values')
-            file1.Append(104, '&Load', 'Load the saved state')
-            file1.Append(105, '&Quit\tCtrl+Q', 'Quit the Application')
+            file1.Append(104, '&Quit\tCtrl+Q', 'Quit the Application')
 
             #Event Handler
-            self.Bind(wx.EVT_MENU,self.OnOpen,id=101)
-            self.Bind(wx.EVT_MENU,self.OnSave,id=102)
-            self.Bind(wx.EVT_MENU,self.OnCheck,id=103)
-            self.Bind(wx.EVT_MENU,self.OnLoad,id=104)
-            self.Bind(wx.EVT_MENU,self.OnQuit,id=105)
-
-        def OnOpen(self, event):
-            dlg = wx.FileDialog(self,"Choose a file",os.getcwd(),"","*.*",wx.OPEN)
-            if dlg.ShowModal() == wx.ID_OK:
-                    path = dlg.GetPath()
-                    mypath = os.path.basename(path)
-                    self.SetStatusText("You selected: %s" %mypath)
-            dlg.Destroy()
+            self.Bind(wx.EVT_MENU,self.OnSave,id=101)
+            self.Bind(wx.EVT_MENU,self.OnCheck,id=102)
+            self.Bind(wx.EVT_MENU,self.OnLoad,id=103)
+            self.Bind(wx.EVT_MENU,self.OnQuit,id=104)
 
         def OnSave(self, event):
 
@@ -174,11 +160,29 @@ def main():
                     #label_text=parameters[section_index][parameter_index]
                     #print label_text+"   "+(str)(parameter_index)
                     #print input_text[section_index][parameter_index].GetValue()
+
                     if(parameters[section_index][parameter_index+1].strip()!="Boolean feature macro."):
 
                         # Conditions not correct. Have to be changed according to ranges once they are updated.
-                        if(input_text[section_index][parameter_index].GetValue()=="0" or input_text[section_index][parameter_index].GetValue()=="Enter Value"):
+
+                        #Validation stub if data type is function pointer
+                        if("function pointer" in parameters[section_index][parameter_index+1] or "Function pointer" in parameters[section_index][parameter_index+1]):
+                            value_entered=input_text[section_index][parameter_index].GetValue()
+                            # Checking if the first character does not have a number.
+                            if re.match("^[A-Za-z_]+$", value_entered[0]):
+                                # Checking if the string has only characters -> (a-z, A-Z, 0-9, '_' )
+                                if re.match("^[A-Za-z0-9_]+$", value_entered):
+                                    continue
+
+                        #Validation stub if data type is an integer
+                        elif ("integer" in parameters[section_index][parameter_index+1]):
+                            value_entered=input_text[section_index][parameter_index].GetValue()
+                            if re.match("^[A-Za-z0-9*+-/_]+$", value_entered):
+                                continue
+
+                        elif(input_text[section_index][parameter_index].GetValue()=="0" or input_text[section_index][parameter_index].GetValue()=="Enter Value"):
                             continue
+
                         else:
                             message=message+"\n"+parameters[section_index][parameter_index]
             dial = wx.MessageDialog(None,message, 'Not Compatible Data Types', wx.OK)
