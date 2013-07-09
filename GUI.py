@@ -112,7 +112,7 @@ def main():
             file1=wx.Menu()
 
             #Appending items to menu
-            menubar.Append(file1, '&File')
+            menubar.Append(file1, '&Header')
             self.SetMenuBar(menubar)
 
             #Items of file

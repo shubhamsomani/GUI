@@ -1,5 +1,6 @@
 import wx
 import os
+from os.path import expanduser
 import GUI
 from text import text_parser
 
@@ -14,7 +15,7 @@ class Frame(wx.Frame):
         m_text.SetFont(wx.Font(14, wx.SWISS, wx.NORMAL, wx.BOLD))
         m_text.SetSize(m_text.GetBestSize())
 
-        but=wx.Button(panel, 1, 'Open')
+        but=wx.Button(panel, 1, 'Open conf.t')
         but.SetToolTip(wx.ToolTip("Please select conf.t from RTEMS"))
         self.Bind(wx.EVT_BUTTON, self.OnOpen, id=1)
 
@@ -30,8 +31,8 @@ class Frame(wx.Frame):
 
     def OnOpen(self,e):
         """ Open a file"""
-        self.dirname = ''
-        dlg = wx.FileDialog(self, "Choose a file", self.dirname, "", "*.*", wx.OPEN)
+        home = expanduser("~")
+        dlg = wx.FileDialog(self, "Choose a file", home, "", "*.*", wx.OPEN)
         if dlg.ShowModal() == wx.ID_OK:
             self.filename = dlg.GetFilename()
             self.dirname = dlg.GetDirectory()
@@ -39,7 +40,6 @@ class Frame(wx.Frame):
             contents=data.readlines()
             parameters=text_parser.return_parameters(contents)
             GUI.set_parameters(parameters)
-            
             data.close()
         dlg.Destroy()
     
