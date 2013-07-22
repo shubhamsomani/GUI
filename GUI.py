@@ -72,7 +72,9 @@ def main():
                     if(parameters[section_index][parameter_index+1].strip()=="Boolean feature macro."):
                         input_text[section_index][parameter_index]=wx.CheckBox(page[section_index], wx.ID_ANY, '', (10, 10))
                     else:
-                        if("The default value is " in parameters[section_index][parameter_index+3]):
+                        if("This is not defined by default" in parameters[section_index][parameter_index+3]):
+                            input_text[section_index][parameter_index]=wx.TextCtrl(page[section_index],wx.ID_ANY,'')
+                        elif("The default value is " in parameters[section_index][parameter_index+3]):
                             temp=parameters[section_index][parameter_index+3].split("The default value is ")
                             temp2=temp[1]
                             if("." in temp2):
@@ -168,8 +170,11 @@ def main():
 
                         # Conditions not correct. Have to be changed according to ranges once they are updated.
 
+                        if(input_text[section_index][parameter_index].GetValue()==""):
+                            continue
+
                         #Validation stub if data type is function pointer
-                        if("function pointer" in parameters[section_index][parameter_index+1] or "Function pointer" in parameters[section_index][parameter_index+1]):
+                        elif("function pointer" in parameters[section_index][parameter_index+1] or "Function pointer" in parameters[section_index][parameter_index+1]):
                             value_entered=input_text[section_index][parameter_index].GetValue()
                             # Checking if the first character does not have a number.
                             if re.match("^[A-Za-z_]+$", value_entered[0]):
@@ -183,7 +188,7 @@ def main():
                             if re.match("^[A-Za-z0-9*+-/_]+$", value_entered):
                                 continue
 
-                        elif(input_text[section_index][parameter_index].GetValue()=="0" or input_text[section_index][parameter_index].GetValue()=="Enter Value"):
+                        elif(input_text[section_index][parameter_index].GetValue()=="0"):
                             continue
 
                         else:
