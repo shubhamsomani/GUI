@@ -72,20 +72,37 @@ def main():
                     if(parameters[section_index][parameter_index+1].strip()=="Boolean feature macro."):
                         input_text[section_index][parameter_index]=wx.CheckBox(page[section_index], wx.ID_ANY, '', (10, 10))
                     else:
-                        if("This is not defined by default" in parameters[section_index][parameter_index+3]):
+                        # If not defined by default then leave empty
+                        if("This is not defined by default" in parameters[section_index][parameter_index+3] or "This option is BSP specific." in parameters[section_index][parameter_index+3]):
                             input_text[section_index][parameter_index]=wx.TextCtrl(page[section_index],wx.ID_ANY,'')
+
+                        # If the data type is of type RTEMS Attributes.
+                        elif("RTEMS ATTRIBUTES" in (parameters[section_index][parameter_index+1].strip()).upper()):
+                            task_attributes=['RTEMS_NO_FLOATING_POINT','RTEMS_FLOATING_POINT','RTEMS_LOCAL','RTEMS_GLOBAL','RTEMS_DEFAULT_ATTRIBUTES']
+                            input_text[section_index][parameter_index]=wx.ComboBox(page[section_index],choices=task_attributes,style=wx.CB_DROPDOWN)
+                            input_text[section_index][parameter_index].SetValue('RTEMS_DEFAULT_ATTRIBUTES')
+
+                        # If the data type is of type RTEMS Modes.
+                        elif("RTEMS MODE" in (parameters[section_index][parameter_index+1].strip()).upper()):
+                            rtems_modes=['RTEMS_PREEMPT','RTEMS_NO_PREEMPT','RTEMS_NO_TIMESLICE','RTEMS_TIMESLICE','RTEMS_ASR','RTEMS_NO_ASR','RTEMS_INTERRUPT_LEVEL(0)','RTEMS_INTERRUPT_LEVEL(n)']
+                            input_text[section_index][parameter_index]=wx.ComboBox(page[section_index],choices=rtems_modes,style=wx.CB_DROPDOWN)
+                            input_text[section_index][parameter_index].SetValue('RTEMS_NO_PREEMPT')
+
+                        # If default value is in the format- "The default value is xxx."
                         elif("The default value is " in parameters[section_index][parameter_index+3]):
                             temp=parameters[section_index][parameter_index+3].split("The default value is ")
                             temp2=temp[1]
                             if("." in temp2):
                                 final=temp2.split(".")
-
                             #CONFIGURE_INIT_TASK_NAME is an exception as its default value has commas in it.
                             if("," in temp2 and label_text!="CONFIGURE_INIT_TASK_NAME"):
                                 final=temp2.split(",")
                             input_text[section_index][parameter_index]=wx.TextCtrl(page[section_index],wx.ID_ANY,final[0])
+
+                        #Else we dont know how to handle it! :(
                         else:
                             input_text[section_index][parameter_index]=wx.TextCtrl(page[section_index],wx.ID_ANY,'Enter Value')
+
 
                     # Tooltip showing default value
 
@@ -156,8 +173,8 @@ def main():
 
 
         def OnCheck(self, event):
-            #INCOMPLETE
             message="The following parameters are not given desired values "
+            check_if_all_arguments_are_correct=0
             number_of_sections=len(parameters)
             for section_index in xrange(number_of_sections):
                 for parameter_index in range(1,len(parameters[section_index]),6):
@@ -168,33 +185,58 @@ def main():
 
                     if(parameters[section_index][parameter_index+1].strip()!="Boolean feature macro."):
 
-                        # Conditions not correct. Have to be changed according to ranges once they are updated.
 
                         if(input_text[section_index][parameter_index].GetValue()==""):
                             continue
 
+                        #Validation stub if data type is RTEMS Name
+                        if ("RTEMS NAME" in parameters[section_index][parameter_index+1].upper()):
+                            value_entered=input_text[section_index][parameter_index].GetValue()
+                            value_entered=value_entered.strip()
+                            if re.match("^[0-9]+$", value_entered):
+                                if (int)(value_entered)>= 0:
+                                    continue
+                            if "RTEMS_BUILD_NAME( 'U', 'I', '1', ' ' )" ==(value_entered.strip()).upper():
+                                continue
+
                         #Validation stub if data type is function pointer
-                        elif("function pointer" in parameters[section_index][parameter_index+1] or "Function pointer" in parameters[section_index][parameter_index+1]):
+                        if("function pointer" in parameters[section_index][parameter_index+1] or "Function pointer" in parameters[section_index][parameter_index+1]):
                             value_entered=input_text[section_index][parameter_index].GetValue()
                             # Checking if the first character does not have a number.
                             if re.match("^[A-Za-z_]+$", value_entered[0]):
                                 # Checking if the string has only characters -> (a-z, A-Z, 0-9, '_' )
-                                if re.match("^[A-Za-z0-9_]+$", value_entered):
+                                if re.match("^[A-Za-z0-9_]+$", value_entered.strip()):
                                     continue
 
-                        #Validation stub if data type is an integer
-                        elif ("integer" in parameters[section_index][parameter_index+1]):
+                        #Validation stub if data type is RTEMS Attributes or RTEMS Mode.
+                        if("RTEMS ATTRIBUTES" in parameters[section_index][parameter_index+1].upper() or "RTEMS MODE" in parameters[section_index][parameter_index+1].upper()):
                             value_entered=input_text[section_index][parameter_index].GetValue()
-                            if re.match("^[A-Za-z0-9*+-/_]+$", value_entered):
+                            if re.match("^[A-Za-z_0-9() ]+$", value_entered.strip()):
                                 continue
 
-                        elif(input_text[section_index][parameter_index].GetValue()=="0"):
-                            continue
+                        #Validation stub if data type is an integer
+                        if ("integer" in parameters[section_index][parameter_index+1] or "TASK ARGUMENT" in parameters[section_index][parameter_index+1].upper()):
+                            value_entered=input_text[section_index][parameter_index].GetValue()
+                            if re.match("^[A-Za-z0-9*+-/_ ]+$", value_entered.strip()):
+                                continue
 
-                        else:
-                            message=message+"\n"+parameters[section_index][parameter_index]
-            dial = wx.MessageDialog(None,message, 'Not Compatible Data Types', wx.OK)
+                        #Validation stub if data type is of type task priority.
+                        if("TASK PRIORITY" in parameters[section_index][parameter_index+1].upper()):
+                            value_entered=input_text[section_index][parameter_index].GetValue()
+                            if (re.match("^[0-9]+$", value_entered)):
+                                value_entered=(int)(value_entered.strip())
+                                if(value_entered>=1 and value_entered<=255):
+                                    continue
+
+                        check_if_all_arguments_are_correct=1
+                        message=message+"\n"+parameters[section_index][parameter_index]
+
+            if check_if_all_arguments_are_correct == 1:
+                dial = wx.MessageDialog(None,message, 'RTEMS Format Checker', wx.OK)
+            else:
+                dial = wx.MessageDialog(None,'All arguments are in correct format.'+'\n'+'Save Configurations and then generate header! :)', 'RTEMS Format Checker', wx.OK)
             dial.ShowModal()
+
 
         def OnLoad(self,event):
             #Method to read from configuration.ini

@@ -3730,7 +3730,7 @@ List of device driver initializers (@code{rtems_driver_address_table}).
 Undefined or array of device drivers.
 
 @item DEFAULT VALUE:
-This is not defined default, indicating the @code{<rtems/confdefs.h>}
+This is not defined by default, indicating the @code{<rtems/confdefs.h>}
 is providing the device driver table.
 
 @end table
@@ -4304,7 +4304,7 @@ Unsigned integer (@code{uint32_t}).
 Positive.
 
 @item DEFAULT VALUE:
-The default is 2.
+The default value is 2.
 
 @end table
 
@@ -4605,7 +4605,7 @@ Unsigned integer (@code{uint32_t}).
 Zero or positive.
 
 @item DEFAULT VALUE:
-The default value is 400
+The default value is 400.
 
 @end table
 
@@ -4634,7 +4634,7 @@ Unsigned integer (@code{uint32_t}).
 Zero or positive.
 
 @item DEFAULT VALUE:
-The default value is 500
+The default value is 500.
 
 @end table
 
