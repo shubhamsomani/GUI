@@ -264,6 +264,7 @@ def main():
             dial.ShowModal()
 
         def OnGenerate(self, event):
+            self.OnSave(event)
             Generator.create_header(parameters)
             dial = wx.MessageDialog(None,'Header file Generated', 'RTEMS', wx.OK)
             dial.ShowModal()
