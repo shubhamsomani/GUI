@@ -70,8 +70,8 @@ def create_header(parameters):
                         Value_to_be_compared_1=final_value[1].upper();
                         Value_to_be_compared_2=final[0].upper();
                         if(Value_to_be_compared_1.strip()!=Value_to_be_compared_2.strip()):
-                            if(macro_name == "CONFIGURE_TASK_STACK_ALLOCATOR"):
-                                print Value_to_be_compared_1+" "+Value_to_be_compared_2
+                            #if(macro_name == "CONFIGURE_TASK_STACK_ALLOCATOR"):
+                                #print Value_to_be_compared_1+" "+Value_to_be_compared_2
 
                             #Adding Description as a comment
                             if('@code{' in parameters[section_index][parameter_index+4]):
@@ -83,6 +83,9 @@ def create_header(parameters):
                             else:
                                 header_file.write('\n'+'/*'+parameters[section_index][parameter_index+4]+'*/'+'\n')
                             #Adding value selected by user.
+                            #Replacing TRUE by 1.
+                            if((final_value[1].strip()).upper()=='TRUE'):
+                                final_value[1]='1'
                             header_file.write('#define '+macro_name+' '+final_value[1].strip()+'\n')
                                 
     header_file.close()
